@@ -34,7 +34,7 @@ from shared import (
     _now_iso,
     latest_assignment, is_open, create_assignment, run_teacher,
     agent_name, check_ip_limit,
-    _IP_DAILY_MAX,
+    _IP_DAILY_MAX, _set_flag,
 )
 
 # ── App ───────────────────────────────────────────────────────────────────────
