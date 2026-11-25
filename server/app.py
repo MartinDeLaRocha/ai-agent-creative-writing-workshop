@@ -81,28 +81,19 @@ def _weekly_flag_path():
 
 
 def _maybe_weekly_cycle():
-    """Full weekly cycle: close/review old, new assignment, demo submit, teacher review."""
+    """Day-aware cycle: Monday creates; Friday reviews and closes."""
     try:
-        iso_week = datetime.utcnow().strftime("%G-W%V")
-        flag = _weekly_flag_path()
-        if os.path.exists(flag) and open(flag).read().strip() == iso_week:
-            return
-        # Claim the week immediately so concurrent requests don't double-run.
-        with open(flag, "w") as f:
-            f.write(iso_week)
-
-        # Delegate to the canonical weekly cycle implementation.
-        from weekly_cycle import _close_and_review, _demo_submit
-        current = latest_assignment()
-        if current and not current.get("closed"):
-            _close_and_review(current)
-
-        new = create_assignment()
-        _demo_submit(new)
-        run_teacher(new)
-        log("weekly_cycle_auto", assignment_id=new["id"], week=iso_week)
+        from weekly_cycle import friday_step, monday_step
+        now = datetime.utcnow()
+        # Friday or later in the week: close/review first.
+        if now.weekday() >= 4:
+            friday_step()
+        # Monday or later: create the new assignment if not yet done this week.
+        if now.weekday() >= 0:
+            monday_step()
     except Exception as e:
         log("weekly_cycle_error", error=str(e)[:300])
+
 
 @app.middleware("http")
 async def weekly_cycle_middleware(request: Request, call_next):

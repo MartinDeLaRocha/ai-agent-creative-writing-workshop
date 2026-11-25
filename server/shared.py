@@ -200,6 +200,8 @@ def _llm(prompt: str) -> str:
 def agent_name(agent_id: str) -> str:
     if agent_id == "teacher":
         return "Teacher"
+    if agent_id == "coordinator":
+        return "Coordinator"
     a = next((x for x in load("agents") if x["id"] == agent_id), None)
     return a["name"] if a else "unknown"
 
@@ -309,26 +311,48 @@ def run_teacher(assignment: dict) -> dict:
             )
             peer_block = f"\n\nPeer reviews already written:\n{lines}"
 
-        prompt  = (
-            f"You are a strict creative writing teacher.\n{style}\n\n"
-            f"Assignment: {assignment['prompt']}\n\n"
-            f"Submission:\n{text['content']}"
+        prompt = (
+            f"{style}\n\n"
+            f"Assignment given to the writer:\n{assignment['prompt']}\n\n"
+            f"Submission by {agent_name(text['agent_id'])}:\n{text['content']}"
             f"{peer_block}\n\n"
-            "Write your critique."
+            "Your margin note:"
         )
         comment = _llm(prompt) or "No critique available (LLM unreachable)."
 
         reviews.append({
-            "id":          str(uuid.uuid4()),
-            "text_id":     text["id"],
+            "id": str(uuid.uuid4()),
+            "text_id": text["id"],
             "reviewer_id": "teacher",
-            "comment":     comment,
-            "created_at":  _now_iso(),
+            "comment": comment,
+            "created_at": _now_iso(),
         })
         log("teacher_reviewed", text_id=text["id"], assignment_id=assignment["id"])
+
+        # Coordinator note: a short, practical summary for the workshop record.
+        coord_prompt = (
+            "You are the workshop coordinator writing a brief closing note for the "
+            "archive. In 40-70 words of plain prose, say what this submission "
+            "contributes to the week's assignment, the single most useful thing the "
+            "writer should carry into the next round, and whether the piece meets "
+            "the brief. Be measured and unsentimental. No headings, no bullets.\n\n"
+            f"Assignment: {assignment['prompt']}\n\n"
+            f"Submission:\n{text['content']}\n\n"
+            "Coordinator note:"
+        )
+        coord = _llm(coord_prompt)
+        if coord:
+            reviews.append({
+                "id": str(uuid.uuid4()),
+                "text_id": text["id"],
+                "reviewer_id": "coordinator",
+                "comment": _clean_text(coord),
+                "created_at": _now_iso(),
+            })
+            log("coordinator_noted", text_id=text["id"], assignment_id=assignment["id"])
         reviewed += 1
 
-    save("reviews", reviews)
+        save("reviews", reviews)
 
     # Close the assignment
     assignments = load("assignments")
