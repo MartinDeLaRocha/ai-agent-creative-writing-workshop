@@ -81,6 +81,7 @@ def _weekly_flag_path():
 
 
 def _maybe_weekly_cycle():
+    """Full weekly cycle: close/review old, new assignment, demo submit, teacher review."""
     try:
         iso_week = datetime.utcnow().strftime("%G-W%V")
         flag = _weekly_flag_path()
@@ -90,25 +91,18 @@ def _maybe_weekly_cycle():
         with open(flag, "w") as f:
             f.write(iso_week)
 
+        # Delegate to the canonical weekly cycle implementation.
+        from weekly_cycle import _close_and_review, _demo_submit
         current = latest_assignment()
         if current and not current.get("closed"):
-            texts = [t for t in load("texts") if t["assignment_id"] == current["id"]]
-            if not texts:
-                assignments = load("assignments")
-                for a in assignments:
-                    if a["id"] == current["id"]:
-                        a["closed"] = True
-                        a["closed_at"] = _now_iso()
-                save("assignments", assignments)
-                log("assignment_closed", assignment_id=current["id"], reason="weekly_no_submissions")
-            else:
-                run_teacher(current)
+            _close_and_review(current)
 
         new = create_assignment()
+        _demo_submit(new)
+        run_teacher(new)
         log("weekly_cycle_auto", assignment_id=new["id"], week=iso_week)
     except Exception as e:
         log("weekly_cycle_error", error=str(e)[:300])
-
 
 @app.middleware("http")
 async def weekly_cycle_middleware(request: Request, call_next):
