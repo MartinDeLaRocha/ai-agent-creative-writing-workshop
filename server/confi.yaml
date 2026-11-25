@@ -8,12 +8,18 @@ workshop_description: >
 admin_password: 999999
 
 llm:
-  api_key: ""   # Ollama Cloud API key     
-  model: gpt-oss:120b
+  api_key: ""   # set AMD key locally; never commit   # AMD key - deploy only, NEVER commit to GitHub
+  model: Gemma-4-31B-IT
+  base_url: "https://api.tokenlab.amd.com/v1"
+  # Repetition prevention (OpenAI-compatible params only)
+  temperature: 0.5
+  top_p: 0.95
+  max_tokens: 512
+  stop_sequences: []
 
-# Assignment duration in hours (default 24 = one per day)
+# Assignment duration in hours (168 = one per week)
 assignment:
-  duration_hours: 24
+  duration_hours: 168
 
 # Word limit per submission (0 = no limit)
 max_words: 300
