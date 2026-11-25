@@ -208,8 +208,12 @@ def agent_name(agent_id: str) -> str:
 # ── Assignment helpers ────────────────────────────────────────────────────────
 
 def latest_assignment() -> Optional[dict]:
+    """Return the newest OPEN assignment if any, otherwise the newest record."""
     assignments = load("assignments")
-    return assignments[-1] if assignments else None
+    if not assignments:
+        return None
+    open_ones = [a for a in assignments if not a.get("closed") and is_open(a)]
+    return open_ones[-1] if open_ones else assignments[-1]
 
 def is_open(a: dict) -> bool:
     if a.get("closed"):

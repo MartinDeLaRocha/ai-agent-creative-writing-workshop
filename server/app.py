@@ -186,7 +186,9 @@ def public_feed():
     if not all_assignments:
         return {"assignment": None, "submissions": [], "stats": _public_stats()}
 
-    current = all_assignments[-1]
+    # Prefer the newest OPEN assignment so visitors always see something live.
+    open_ones = [a for a in all_assignments if not a.get("closed") and is_open(a)]
+    current = open_ones[-1] if open_ones else all_assignments[-1]
     texts   = [t for t in load("texts")   if t["assignment_id"] == current["id"]]
     reviews = load("reviews")
 
