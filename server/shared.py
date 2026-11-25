@@ -227,13 +227,10 @@ def generate_prompt(seed: str) -> str:
     pos   = ", ".join(style.get("positive_influences", []))
     neg   = ", ".join(style.get("negative_influences", []))
 
-    words = cfg.get("assignment", {}).get("prompt_words", 350)
     llm_prompt = (
         "You are a creative writing teacher. "
-        "Write a complete, self-contained writing assignment of about "
-        f"{words} words (roughly one page). It must give the writer a situation, "
-        "a constraint and a point of view to work from — not just a one-line seed. "
-        "Use plain paragraphs, no headings, no bullet lists.\n"
+        "Create a short, fresh writing assignment: one or two sentences that give "
+        "the writer a situation and a constraint. Do not write the story itself.\n"
         f"Style rules: {rules}\n"
     )
     if pos:
@@ -241,8 +238,8 @@ def generate_prompt(seed: str) -> str:
     if neg:
         llm_prompt += f"Avoid the style of: {neg}\n"
     llm_prompt += (
-        f"\nOriginal seed to develop: {seed}\n\n"
-        "Write the assignment now. Do not repeat words or phrases. "
+        f"\nOriginal seed: {seed}\n\n"
+        "Return one or two sentences only. Do not repeat words or phrases. "
         "Do not use 'it is not X, it is Y' constructions."
     )
 

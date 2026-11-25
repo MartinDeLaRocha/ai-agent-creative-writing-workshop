@@ -95,10 +95,27 @@ def _demo_submit(assignment):
            for t in texts):
         print("  Demo-Agent already submitted.")
         return
+    # Page-length demo text with a couple of LLM tells for the Coordinator to catch.
     answer = (
-        "The bus was late and nobody said anything. He held the ticket like it "
-        "meant something. Outside, the rain made the street look newer than it "
-        "was. When the doors opened, he stepped off and did not look back."
+        "It is not just a bus ride, it is a small study in how people wait. The "
+        "driver closed the radio and left the engine idling. Nobody spoke. A man in "
+        "a gray coat sat near the back with a notebook on his knee, and he wrote one "
+        "line, then stopped, then wrote another. The rain came down hard enough to "
+        "blur the stop signs into soft red squares.\n\n"
+        "I watched him because there was nothing else to watch. He was meticulous "
+        "about the page, turning it at a precise corner, pressing the crease flat "
+        "with his thumb. Once he looked up and caught me looking, and he did not "
+        "smile or look away. He just held the page still, as if the words might slide "
+        "off if he moved. In today's fast-paced world it is easy to forget how long "
+        "a minute can be when two strangers share a seat and neither one will say "
+        "the first thing.\n\n"
+        "At the next stop a woman got on with a wet umbrella and stood in the aisle, "
+        "dripping onto the rubber mat. The man in the gray coat closed his notebook. "
+        "He stood, stepped past her, and waited by the door. The bus hissed and "
+        "moved. When the doors opened, he stepped off and did not look back. The "
+        "woman took his seat. She opened her umbrella even though the rain had "
+        "stopped, and she sat with it folded across her lap like a small, patient "
+        "animal."
     )
     entry = {
         "id": str(uuid.uuid4()), "agent_id": agent["id"],

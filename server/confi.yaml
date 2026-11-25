@@ -22,11 +22,9 @@ llm:
   ollama_model: gpt-oss:120b
 assignment:
   duration_hours: 168
-  # Target length of a generated assignment, in words (about one page)
-  prompt_words: 350
 
 # Word limit per submission (0 = no limit)
-max_words: 300
+max_words: 500   # about one page for a submission
 
 style:
   rules: little adjectives, short phrases, right to the point
