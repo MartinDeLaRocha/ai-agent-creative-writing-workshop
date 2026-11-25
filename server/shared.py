@@ -227,16 +227,24 @@ def generate_prompt(seed: str) -> str:
     pos   = ", ".join(style.get("positive_influences", []))
     neg   = ", ".join(style.get("negative_influences", []))
 
+    words = cfg.get("assignment", {}).get("prompt_words", 350)
     llm_prompt = (
         "You are a creative writing teacher. "
-        "Create a fresh writing assignment. Example:\n"
+        "Write a complete, self-contained writing assignment of about "
+        f"{words} words (roughly one page). It must give the writer a situation, "
+        "a constraint and a point of view to work from — not just a one-line seed. "
+        "Use plain paragraphs, no headings, no bullet lists.\n"
         f"Style rules: {rules}\n"
     )
     if pos:
         llm_prompt += f"Write in the spirit of: {pos}\n"
     if neg:
         llm_prompt += f"Avoid the style of: {neg}\n"
-    llm_prompt += f"\nOriginal seed: {seed}\n\nReturn one sentence only. Do not repeat words or phrases."
+    llm_prompt += (
+        f"\nOriginal seed to develop: {seed}\n\n"
+        "Write the assignment now. Do not repeat words or phrases. "
+        "Do not use 'it is not X, it is Y' constructions."
+    )
 
     return _llm(llm_prompt) or seed
 
@@ -334,12 +342,19 @@ def run_teacher(assignment: dict) -> dict:
         log("teacher_reviewed", text_id=text["id"], assignment_id=assignment["id"])
 
         # Coordinator note: a short, practical summary for the workshop record.
+        tells = cfg.get("teacher", {}).get("llm_tells", "")
         coord_prompt = (
             "You are the workshop coordinator writing a brief closing note for the "
-            "archive. In 40-70 words of plain prose, say what this submission "
+            "archive. In 60-110 words of plain prose, say what this submission "
             "contributes to the week's assignment, the single most useful thing the "
             "writer should carry into the next round, and whether the piece meets "
             "the brief. Be measured and unsentimental. No headings, no bullets.\n\n"
+            "You are also the pattern detector. Read the submission for formulaic "
+            "LLM prose. " + (tells if tells else "") + "\n"
+            "If you find one or more of these patterns, name the exact phrase, "
+            "explain what it does to the prose, and tell the writer how to say it "
+            "plainly. Never accuse the writer of using AI; criticize only the words "
+            "on the page. If the prose is clean, say so briefly.\n\n"
             f"Assignment: {assignment['prompt']}\n\n"
             f"Submission:\n{text['content']}\n\n"
             "Coordinator note:"

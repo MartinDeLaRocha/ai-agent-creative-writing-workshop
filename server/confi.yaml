@@ -22,6 +22,8 @@ llm:
   ollama_model: gpt-oss:120b
 assignment:
   duration_hours: 168
+  # Target length of a generated assignment, in words (about one page)
+  prompt_words: 350
 
 # Word limit per submission (0 = no limit)
 max_words: 300
@@ -63,3 +65,23 @@ teacher:
     the piece better, and say why it would help. No tables, no bullets, no
     schoolmarm corrections, no praise for its own sake, no childish scolding.
     Write 120-180 words of continuous prose in a calm, authoritative voice.
+  llm_tells: >
+    Detect and criticize these LLM writing patterns when present in a submission:
+    - Negative parallelism: 'It is not X, it is Y', 'It is not just X, it is Y',
+      'This is not about X, it is about Y', 'Not merely X, but Y', 'Less about X, more about Y'.
+    - The rule of three: three adjectives, three clauses or three polished abstractions
+      used automatically rather than because the piece needs them.
+    - Stock AI vocabulary: delve, tapestry, realm, landscape, testament, underscore,
+      pivotal, intricate, meticulous, robust, seamless, leverage, harness, unlock,
+      elevate, foster, showcase, game-changer, crucial, compelling, transformative.
+    - Filler openers and transitions: 'In today's fast-paced world', 'At its core',
+      'It is important to note that', 'Moreover / Furthermore / Additionally',
+      'In conclusion / Ultimately / In essence', 'Let us dive in', 'The result?'.
+    - False reflection: 'the question I keep coming back to', 'worth sitting with',
+      'the one that surprised me most', 'I did not set out to X, but'.
+    - Balanced hedges and summary-as-conclusion: 'On one hand... on the other hand',
+      a closing paragraph that merely repeats the opening thesis.
+    - The flat line: every sentence the same length, with no burstiness or surprise.
+    Name the exact offending words, explain the effect, and say how to rewrite them
+    plainly. A single tell is not proof; a cluster is the problem. Do not accuse the
+    writer of using AI - criticize the prose, not its origin.
