@@ -81,7 +81,7 @@ def _set_flag(name: str):
     with open(_flag(name), "w") as f:
         f.write(_today())
 
-# ── AMD LLM (OpenAI-compatible) ──────────────────────────────────────────────
+# ── LLM (OpenAI-compatible) ──────────────────────────────────────────────────
 
 def _detect_repetition(text: str) -> bool:
     """Return True if the text loops the same trigram many times."""
@@ -117,53 +117,83 @@ def _clean_text(text: str) -> str:
 
 def _llm(prompt: str) -> str:
     """
-    Call the AMD LLM API (OpenAI-compatible) at https://api.tokenlab.amd.com/v1.
+    Call an OpenAI-compatible LLM. Primary provider: Pollinations free tier
+    (no key, reachable from PythonAnywhere). Alternatives: AMD Token Lab and
+    Ollama Cloud, used if the primary is unavailable.
 
-    confi.yaml:
-      llm:
-        api_key: "tl-..."
-        model: "Gemma-4-31B-IT"
-        base_url: "https://api.tokenlab.amd.com/v1"
-        temperature: 0.5
-        top_p: 0.95
-        max_tokens: 512
-        stop_sequences: []
+    Anti-repetition is handled in _clean_text (the OpenAI client rejects
+    the repetition_penalty kwarg).
     """
+    import time
+
     cfg     = load_config()
     llm_cfg = cfg.get("llm", {})
-    api_key = llm_cfg.get("api_key") or os.environ.get("AMD_API_KEY", "")
-    model   = llm_cfg.get("model", "Gemma-4-31B-IT")
-    base_url = llm_cfg.get("base_url", "https://api.tokenlab.amd.com/v1")
+    amd_key = llm_cfg.get("api_key") or os.environ.get("AMD_API_KEY", "")
+    amd_model = llm_cfg.get("model", "Gemma-4-31B-IT")
+    amd_url = llm_cfg.get("base_url", "https://api.tokenlab.amd.com/v1")
+    ollama_key = llm_cfg.get("ollama_api_key") or os.environ.get("OLLAMA_API_KEY", "")
+    ollama_model = llm_cfg.get("ollama_model", "gpt-oss:120b")
 
-    if not api_key:
-        log("llm_error", error="no AMD API key configured")
-        return ""
+    temperature = llm_cfg.get("temperature", 0.5)
+    top_p       = llm_cfg.get("top_p", 0.95)
+    max_tokens  = llm_cfg.get("max_tokens", 512)
+    stops       = llm_cfg.get("stop_sequences", [])
 
-    try:
+    def _call(base, key, mdl):
         from openai import OpenAI
-        client = OpenAI(base_url=base_url, api_key=api_key)
-
-        temperature = llm_cfg.get("temperature", 0.5)
-        top_p       = llm_cfg.get("top_p", 0.95)
-        max_tokens  = llm_cfg.get("max_tokens", 512)
-        stops       = llm_cfg.get("stop_sequences", [])
-
-        kwargs = dict(
-            model=model,
+        client = OpenAI(base_url=base, api_key=key, timeout=90.0, max_retries=0)
+        kw = dict(
+            model=mdl,
             messages=[{"role": "user", "content": prompt}],
             temperature=temperature,
             top_p=top_p,
             max_tokens=max_tokens,
         )
         if stops:
-            kwargs["stop"] = stops
+            kw["stop"] = stops
+        r = client.chat.completions.create(**kw)
+        return r.choices[0].message.content or ""
 
-        result = client.chat.completions.create(**kwargs)
-        content = result.choices[0].message.content or ""
-        return _clean_text(content)
-    except Exception as e:
-        log("llm_error", error=str(e)[:300])
-        return ""
+    # 1) PRIMARY: Pollinations free tier — no key required.
+    #    Free tier allows ~1 reply / 45s per IP — retry with backoff.
+    poll_model = llm_cfg.get("fallback_model", "openai")
+    for attempt in range(3):
+        try:
+            content = _call("https://text.pollinations.ai/openai", "no-key-needed", poll_model)
+            if content:
+                log("llm_provider", provider="pollinations", model=poll_model)
+                return _clean_text(content)
+        except Exception as e:
+            err = str(e)[:200]
+            if "402" in err or "429" in err or "rate" in err.lower():
+                log("llm_retry", provider="pollinations", attempt=attempt + 1)
+                time.sleep(20 * (attempt + 1))
+                continue
+            log("llm_fallback", provider="pollinations", error=err)
+            break
+
+    # 2) ALTERNATIVE: AMD Token Lab (if key configured)
+    if amd_key:
+        try:
+            content = _call(amd_url, amd_key, amd_model)
+            if content:
+                log("llm_provider", provider="amd", model=amd_model)
+                return _clean_text(content)
+        except Exception as e:
+            log("llm_fallback", provider="amd", error=str(e)[:200])
+
+    # 3) ALTERNATIVE: Ollama Cloud (if key configured)
+    if ollama_key:
+        try:
+            content = _call("https://ollama.com/v1", ollama_key, ollama_model)
+            if content:
+                log("llm_provider", provider="ollama", model=ollama_model)
+                return _clean_text(content)
+        except Exception as e:
+            log("llm_fallback", provider="ollama", error=str(e)[:200])
+
+    return ""
+
 
 # ── Agent helpers ─────────────────────────────────────────────────────────────
 

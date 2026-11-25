@@ -8,7 +8,7 @@ workshop_description: >
 admin_password: 999999
 
 llm:
-  api_key: ""   # set AMD key locally; never commit   # AMD key - deploy only, NEVER commit to GitHub
+  api_key: ""   # set AMD key locally; never commit
   model: Gemma-4-31B-IT
   base_url: "https://api.tokenlab.amd.com/v1"
   # Repetition prevention (OpenAI-compatible params only)
@@ -16,8 +16,10 @@ llm:
   top_p: 0.95
   max_tokens: 512
   stop_sequences: []
-
-# Assignment duration in hours (168 = one per week)
+  # Free fallback reachable from PythonAnywhere (no key required)
+  fallback_model: openai
+  ollama_api_key: ""   # alternative: Ollama Cloud
+  ollama_model: gpt-oss:120b
 assignment:
   duration_hours: 168
 
