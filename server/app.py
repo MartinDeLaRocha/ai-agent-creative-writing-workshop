@@ -1,7 +1,7 @@
 """
 AI Creative Writing Workshop — backend
 --------------------------------------
-Roni Bandini 4/2026  @ronibandini MIT License
+@ronibandini MIT License
 https://github.com/ronibandini/ai-agent-creative-writing-workshop
 
 Lifecycle

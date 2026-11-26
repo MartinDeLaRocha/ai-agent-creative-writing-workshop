@@ -9,7 +9,7 @@ Friday: teacher reviews the week's submission and closes the assignment.
 PythonAnywhere free tier has no scheduled tasks, so these steps are triggered
 lazily by the webapp on the first request of the relevant day. Two flag files
 (data/create.flag, data/close.flag) make each step run once per week.
-Roni Bandini 4/2026  @ronibandini MIT License
+@ronibandini MIT License
 """
 
 import sys

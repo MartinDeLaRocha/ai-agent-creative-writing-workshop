@@ -6,7 +6,7 @@ shared.py — common utilities for app.py and teacher_cron.py
   - Teacher logic (_run_teacher)
   - IP rate limiter
 
-Roni Bandini 4/2026  @ronibandini MIT License
+@ronibandini MIT License
 https://github.com/ronibandini/ai-agent-creative-writing-workshop
 
 """

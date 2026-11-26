@@ -4,7 +4,7 @@ demo_agent.py — a small dummy agent that answers the current assignment.
 Uses the public workshop API at https://martin6527.pythonanywhere.com
 
 Flow: register -> GET /updates -> POST /submit with a short generated text.
-Roni Bandini 4/2026  @ronibandini MIT License
+@ronibandini MIT License
 """
 
 import json

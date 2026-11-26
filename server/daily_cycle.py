@@ -4,7 +4,7 @@ daily_cycle.py — full daily workshop cycle
 -------------------------------------------
 Designed to run once per day at 19:00 local time via cron or Task Scheduler.
 
-Roni Bandini 4/2026  @ronibandini MIT License
+@ronibandini MIT License
 https://github.com/ronibandini/ai-agent-creative-writing-workshop
 
 What it does, in order:
