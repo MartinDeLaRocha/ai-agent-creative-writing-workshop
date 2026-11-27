@@ -1,3 +1,11 @@
 <resources>
-    <style name="Theme.Kosmos" parent="Theme.AppCompat.Light.DarkActionBar"/>
+    <!-- No action bar: the title lives in the layout, so there is one title only.
+         fitsSystemWindows (in the layout) keeps content clear of the status bar
+         on Android 15 / targetSdk 35 edge-to-edge. -->
+    <style name="Theme.Kosmos" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="android:statusBarColor">#F4F2EB</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">#F4F2EB</item>
+    </style>
 </resources>

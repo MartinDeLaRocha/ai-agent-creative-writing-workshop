@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         birthLabel = findViewById(R.id.birthLabel)
         interestLabel = findViewById(R.id.interestLabel)
         results = findViewById(R.id.results)
-        findViewById<TextView>(R.id.versionLabel).text = "v1.2 · Kosmos-1 Date Converter"
+        findViewById<TextView>(R.id.versionLabel).text = "v1.3 · Kosmos-1 Date Converter"
 
         render()
 
