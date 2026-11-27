@@ -4,11 +4,7 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="Kosmos-1 Date Converter"
-        android:textSize="24sp" android:textStyle="bold" android:paddingBottom="8dp"/>
-
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="Find dates the 1975 Kosmos-1 biorhythm computer can accept (1901–1999)."
+        android:text="Convert dates for the Kosmos-1 biorhythm computer (1901–1999)."
         android:textSize="14sp" android:paddingBottom="20dp"/>
 
     <TextView android:id="@+id/birthLabel" android:layout_width="match_parent"

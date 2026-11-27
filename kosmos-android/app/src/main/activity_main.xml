@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:padding="24dp"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Convert dates for the Kosmos-1 biorhythm computer (1901–1999)."
+        android:textSize="14sp" android:paddingBottom="20dp"/>
+
+    <TextView android:id="@+id/birthLabel" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:textSize="16sp"/>
+    <Button android:id="@+id/pickBirth" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="Choose birth date"/>
+
+    <TextView android:id="@+id/interestLabel" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:textSize="16sp" android:paddingTop="16dp"/>
+    <Button android:id="@+id/pickInterest" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="Choose date of interest"/>
+    <Button android:id="@+id/todayButton" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="Use today"/>
+
+    <Button android:id="@+id/convertButton" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="Convert"
+        android:layout_marginTop="24dp"/>
+
+    <TextView android:id="@+id/results" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:textSize="16sp"
+        android:fontFamily="monospace" android:paddingTop="24dp"/>
+</LinearLayout>

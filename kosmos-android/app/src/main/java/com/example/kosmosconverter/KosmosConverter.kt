@@ -37,8 +37,9 @@ object KosmosConverter {
         val note = if (periods == 0) {
             "Both dates are already within 1901-1999. No shift was necessary."
         } else {
+            val plural = if (periods == 1) "period" else "periods"
             "Both dates shifted back by ${String.format("%,d", periods * PERIOD_DAYS)} days " +
-                "($periods complete periods). Interval and weekday are preserved."
+                "($periods complete $plural). Interval and weekday are preserved."
         }
         return Result(
             birth = fmt(cb), interest = fmt(ci),
