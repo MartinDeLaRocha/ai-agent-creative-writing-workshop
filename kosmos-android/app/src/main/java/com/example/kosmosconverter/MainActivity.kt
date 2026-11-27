@@ -22,8 +22,8 @@ class MainActivity : AppCompatActivity() {
         birthLabel = findViewById(R.id.birthLabel)
         interestLabel = findViewById(R.id.interestLabel)
         results = findViewById(R.id.results)
+        findViewById<TextView>(R.id.versionLabel).text = "v1.2 · Kosmos-1 Date Converter"
 
-        // Prepopulate: birth defaults to 30 years before today; interest = TODAY.
         render()
 
         findViewById<Button>(R.id.pickBirth).setOnClickListener {
@@ -56,10 +56,12 @@ class MainActivity : AppCompatActivity() {
             val r = KosmosConverter.convert(birth, interest)
             results.text = buildString {
                 append("Birth:  ${r.birth}\n")
-                append("Date:   ${r.interest}\n\n")
+                append("Date:   ${r.interest}\n")
+                append("\n")
                 append("Interval: ${r.intervalDays} days\n")
-                append("Periods: ${r.periods}\n\n")
-                append(r.note)
+                append("Periods: ${r.periods}\n")
+                append("\n")
+                append(r.note.replace(". ", ".\n\n"))
             }
         } catch (e: IllegalArgumentException) {
             results.text = e.message
